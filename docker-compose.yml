@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # 1. PHP Контейнер
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ledger_php
+    volumes:
+      - .:/var/www/html
+    networks:
+      - ledger_network
+
+  # 2. Nginx Контейнер
+  web:
+    image: nginx:alpine
+    container_name: ledger_nginx
+    ports:
+      - "8081:80" # Компьютерын 8081 порт дээр ажиллана
+    volumes:
+      - .:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - ledger_network
+
+  # 3. MySQL Контейнер
+  db:
+    image: mysql:8.0
+    container_name: ledger_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ledger_db
+      MYSQL_ROOT_PASSWORD: root_password_123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - ledger_network
+
+networks:
+  ledger_network:
+    driver: bridge
+
+volumes:
+  db_data:
