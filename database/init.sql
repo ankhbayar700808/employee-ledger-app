@@ -1,3 +1,4 @@
+USE ledger_db;
 -- Хүснэгт 1: Ажилчид
 CREATE TABLE IF NOT EXISTS employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
